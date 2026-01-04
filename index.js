@@ -459,22 +459,29 @@ if ('IntersectionObserver' in window) {
     });
 }
 const handleSubmit = (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  const myForm = event.target;
-  const formData = new FormData(myForm);
-  
-  // CRITICAL: Manually add the form-name for AJAX submissions
-  formData.append("form-name", "contact");
+    const myForm = event.target;
+    const formData = new FormData(myForm);
 
-  fetch("/", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(formData).toString(),
-  })
-    .then(() => {
-      myForm.style.display = "none";
-      document.getElementById("form-feedback").style.display = "block";
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString(),
     })
-    .catch((error) => alert("Error: " + error));
-};
+      .then(() => {
+        // Success: Hide form and show message
+        myForm.style.opacity = "0";
+        setTimeout(() => {
+          myForm.style.display = "none";
+          const feedback = document.getElementById("form-feedback");
+          feedback.style.display = "block";
+        }, 300);
+      })
+      .catch((error) => {
+        alert("Submission failed: " + error);
+      });
+  };
+
+  // Attach the listener to your form
+  document.querySelector(".contact-form").addEventListener("submit", handleSubmit);
